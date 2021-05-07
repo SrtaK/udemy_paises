@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable} from 'rxjs';
 
@@ -14,18 +14,44 @@ export class PaisService {
 
   private apiUrl: string = 'https://restcountries.eu/rest/v2';
 
-  constructor( private http:HttpClient ) { }
+  get httpParams () {
+    return new HttpParams().set( 'fields', 'name;capital;alpha2Code;flag;population' );
+  }
+
+  constructor( private http: HttpClient ) { }
+
 
   //recibe el termino y devuelve un observable
-  buscarPais(termino:string):Observable<Country[]>{
-
+  buscarPais( termino: string ): Observable<Country[]> {
     const url = `${ this.apiUrl }/name/${ termino }`;
+    //este get devuelve un observable
+    return this.http.get<Country[]>( url, { params: this.httpParams } );
+  }
+
+
+    //recibe el termino y devuelve un observable
+  buscarCapital( termino: string ):Observable<Country[]>{
+
+    const url = `${ this.apiUrl }/capital/${ termino }`;
     //este get devuelve un observable
     return this.http.get<Country[]>( url );
 
   }
 
+  buscarPaisPorAlpha( id: string ):Observable<Country>{
 
+    const url = `${ this.apiUrl }/alpha/${ id }`;
+    //este get devuelve un observable
+    return this.http.get<Country>( url );
+
+  }
+
+  buscarPorRegion( region: string ): Observable<Country[]> {
+
+    const url = `${ this.apiUrl }/region/${ region }`;
+    return this.http.get<Country[]>( url, { params: this.httpParams } )
+
+  }
 
 
 }
